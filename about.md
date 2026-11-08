@@ -1,9 +1,9 @@
 # Controller Focus
 
-Your controller should control the game you are actually playing.
+Your controller should only control the game you're actually playing.
 
-Controller Focus blocks Geometry Dash's controller processing while another app is in the foreground. It covers face buttons, menu/back/pause controls, D-pad, shoulders, triggers and both sticks, including controller-driven mouse movement and clicks.
+While another app is in front, Controller Focus makes Geometry Dash ignore the controller: buttons, Start/Back, D-pad, bumpers, triggers, both sticks, and the mouse movement and clicks GD creates from the controller.
 
-Return to Geometry Dash, release the buttons and center the sticks, and controller input resumes automatically. No setup required.
+When you come back to GD, release everything and center the sticks and it picks up again by itself. No settings.
 
-Windows only. Requires Geometry Dash 2.2081 and Geode 5.8.2 or newer compatible 5.x.
+Windows only. Geometry Dash 2.2081, Geode 5.8.2 or a compatible 5.x.

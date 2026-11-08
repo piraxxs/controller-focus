@@ -1,30 +1,30 @@
-CONTROLLER FOCUS 1.0.0 — piraxxs
+CONTROLLER FOCUS 1.0.0 - piraxxs
 
-Windows — Geometry Dash 2.2081 — Geode 5.8.2 (5.x compatible)
+Windows - Geometry Dash 2.2081 - Geode 5.8.2 (5.x)
 
-INSTALLER
+INSTALLATION
 1. Ferme Geometry Dash.
-2. Dans Steam : clic droit sur Geometry Dash > Gérer > Parcourir les fichiers locaux.
-3. Ouvre geode puis mods.
-4. Copie piraxxs.controller_focus.geode dans ce dossier.
-5. Relance Geometry Dash.
+2. Steam : clic droit sur Geometry Dash > Gérer > Parcourir les fichiers locaux.
+3. Ouvre geode, puis mods.
+4. Copie piraxxs.controller_focus.geode dedans.
+5. Relance le jeu.
 
-UTILISER
-Le mod fonctionne automatiquement. Quand Geometry Dash est en arrière-plan,
-le traitement de la manette est bloqué : boutons, Retour, Pause, menus,
-gâchettes, croix directionnelle, sticks et clics/déplacements de souris produits par GD.
+UTILISATION
+Rien à régler. Quand GD est en arrière-plan, il ignore la manette : boutons,
+Retour, Pause, menus, gâchettes, croix, sticks, et la souris pilotée par la manette.
 
-Au retour sur GD, relâche tous les boutons et gâchettes et recentre les sticks
-une fois pour réactiver la manette. Cela évite une action involontaire au retour.
+Quand tu reviens sur GD, relâche tous les boutons et gâchettes et recentre les
+sticks une fois, la manette se réactive ensuite. C'est fait pour éviter qu'un
+bouton resté enfoncé dans un autre jeu déclenche quelque chose dans GD.
 
-À TESTER
-Laisse GD ouvert, passe sur une autre application puis utilise tous les boutons.
-GD ne doit plus réagir. Reviens sur GD, relâche la manette puis vérifie qu'elle
-fonctionne de nouveau. Teste également avec GD réduit dans la barre des tâches.
+POUR TESTER
+Laisse GD ouvert, passe sur une autre appli et appuie sur tout : GD ne doit pas
+réagir. Reviens sur GD, relâche la manette et vérifie qu'elle remarche. Refais
+le test avec GD réduit dans la barre des tâches.
 
-La compilation et les tests automatiques ne remplacent pas cet essai en jeu.
-Les logiciels qui convertissent eux-mêmes la manette en clavier/souris et les
-mods qui lisent la manette indépendamment peuvent demander un réglage séparé.
+Les tests automatiques ne couvrent que la logique, pas le jeu lui-même.
+Un logiciel qui transforme la manette en clavier/souris, ou un mod qui lit la
+manette tout seul, peut demander un réglage à part.
 
-DÉSINSTALLER
-Ferme le jeu et retire piraxxs.controller_focus.geode du dossier geode/mods.
+DÉSINSTALLATION
+Ferme le jeu et supprime piraxxs.controller_focus.geode de geode/mods.

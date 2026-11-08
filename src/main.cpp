@@ -11,16 +11,16 @@ using namespace geode::prelude;
 namespace {
 std::array<FocusGate, XUSER_MAX_COUNT> gates;
 
-bool gameIsForeground() {
+bool isForeground() {
     auto window = GetForegroundWindow();
     if (!window) return false;
-    DWORD process = 0;
-    GetWindowThreadProcessId(window, &process);
-    return process == GetCurrentProcessId();
+    DWORD pid = 0;
+    GetWindowThreadProcessId(window, &pid);
+    return pid == GetCurrentProcessId();
 }
 
 bool isNeutral(XINPUT_GAMEPAD const& pad) {
-    // Match Geode's deadzone for both sticks. Ignore small hardware drift.
+    // same deadzone as geode, small drift shouldn't count
     auto centered = [](SHORT axis) {
         return std::abs(static_cast<int>(axis)) <= XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE;
     };
@@ -31,8 +31,8 @@ bool isNeutral(XINPUT_GAMEPAD const& pad) {
         centered(pad.sThumbRX) && centered(pad.sThumbRY);
 }
 
-// Only release GD's internal state. Never synthesize an OS mouse event here:
-// SendInput would be delivered to the OTHER game after Alt-Tab.
+// release whatever GD thinks is still held.
+// no SendInput here, it would end up in the other game after alt-tab
 void releaseController(CXBOXController* controller, int userIndex) {
     struct Binding { bool CXBOXController::*state; enumKeyCodes key; };
     static constexpr Binding bindings[] = {
@@ -83,7 +83,7 @@ class $modify(ControllerFocusApplication, CCApplication) {
         if (!controller) return;
         const int slot = controller->m_userIndex;
         XINPUT_STATE state{};
-        const bool foreground = gameIsForeground();
+        const bool foreground = isForeground();
         const bool validSlot = slot >= 0 && slot < XUSER_MAX_COUNT;
         const bool connected = foreground && validSlot && XInputGetState(slot, &state) == ERROR_SUCCESS;
         if (!validSlot || !gates[slot].allow(foreground, connected, isNeutral(state.Gamepad))) {
@@ -96,7 +96,7 @@ class $modify(ControllerFocusApplication, CCApplication) {
     }
 
     void updateMouseControl() {
-        if (!gameIsForeground()) {
+        if (!isForeground()) {
             m_obLeftThumb = CCPointZero;
             m_obRightThumb = CCPointZero;
             return;
@@ -106,12 +106,13 @@ class $modify(ControllerFocusApplication, CCApplication) {
 };
 
 namespace {
+    // onGLFWWindowFocus is protected, this is just to get at it
     struct FocusViewAccess : CCEGLView {
         using CCEGLView::onGLFWWindowFocus;
     };
 
     void focusChanged(CCEGLView* view, GLFWwindow* window, int focused) {
-        // Minimized windows may stop polling; remember even a brief loss of focus.
+        // when minimized GD may stop polling, so disarm right here
         if (!focused) {
             for (auto& gate : gates) gate.unfocus();
             if (auto app = CCApplication::get()) {
@@ -124,11 +125,10 @@ namespace {
 }
 
 $on_mod(Loaded) {
-    // This function is exported by cocos but absent from Geode's generated
-    // CCEGLView modify bindings, so a $modify method would not install a hook.
+    // not in geode's CCEGLView bindings, so $modify can't hook it
     auto address = addresser::getNonVirtual(&FocusViewAccess::onGLFWWindowFocus);
     auto hook = Mod::get()->hook(reinterpret_cast<void*>(address), &focusChanged,
         "Controller Focus window focus", tulip::hook::TulipConvention::Thiscall);
-    if (!hook) log::error("Could not install focus transition hook: {}", hook.unwrapErr());
-    log::info("Controller Focus active: controller input requires foreground focus and neutral rearming");
+    if (!hook) log::error("Could not install focus hook: {}", hook.unwrapErr());
+    log::info("Controller Focus loaded");
 }

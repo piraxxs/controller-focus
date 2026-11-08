@@ -1,24 +1,24 @@
 # Controller Focus
 
-A Windows Geode mod by piraxxs. Geometry Dash only processes controllers while its window is in the foreground.
+Geode mod for Geometry Dash (Windows). Stops the game from reading your controller while it's not the active window, so you can play something else without GD reacting in the background.
 
 ## Install
 
-Requires Geometry Dash 2.2081 and Geode 5.8.2 (compatible 5.x).
+Needs Geometry Dash 2.2081 and Geode 5.8.2 (5.x should work).
 
-1. Close Geometry Dash.
-2. Copy `piraxxs.controller_focus.geode` into `Geometry Dash/geode/mods/`.
-3. Start the game. No settings are required.
+1. Close GD
+2. Put `piraxxs.controller_focus.geode` in `Geometry Dash/geode/mods/`
+3. Start the game, there are no settings
 
-All controller processing is gated together: face buttons, Back, Start, shoulders, triggers, D-pad, both sticks, and controller-generated mouse actions. Other games retain access to the controller.
+Everything is blocked while GD is in the background: face buttons, Start/Back, bumpers, triggers, D-pad, both sticks and the mouse movement/clicks GD generates from the controller. Other games still get the controller normally.
 
-After returning to Geometry Dash, release every button and trigger and center both sticks once. This prevents a button held in another game from triggering a menu or gameplay action on return. Small stick drift inside Geode's deadzone is accepted. Each controller rearms independently.
+When you come back to GD, let go of all buttons and triggers and center the sticks once, then the controller works again. Without this, a button you were holding in the other game would trigger something in GD as soon as you switch back. Slight stick drift is fine (it uses Geode's deadzone). Each controller is handled separately.
 
-This mod gates Geometry Dash's native/Geode controller path. Separate tools that translate controller input into keyboard or mouse events, or mods that poll controllers independently, may need their own focus settings.
+It only covers GD's own controller handling. Tools that turn the controller into keyboard/mouse input, or mods that read the controller on their own, are not affected by this mod.
 
 ## Build
 
-Install the Geode SDK and CLI, CMake 3.25+, and a C++23-capable Visual Studio toolchain. Set `GEODE_SDK` to the SDK directory.
+You need the Geode SDK + CLI, CMake 3.25+ and Visual Studio with C++23 support. `GEODE_SDK` has to point to the SDK folder.
 
 ```powershell
 cmake -S . -B build -A x64
@@ -26,9 +26,9 @@ cmake --build build --config Release
 ctest --test-dir build -C Release --output-on-failure
 ```
 
-The `.geode` package is generated in `build/`. Building does not install it automatically.
+The `.geode` file ends up in `build/`, it isn't installed for you.
 
-Standalone transition tests without the SDK:
+To only build the tests (no SDK needed):
 
 ```powershell
 cmake -S . -B build-tests -DFOCUS_GUARD_TESTS_ONLY=ON
@@ -36,12 +36,12 @@ cmake --build build-tests --config Release
 ctest --test-dir build-tests -C Release --output-on-failure
 ```
 
-## Manual verification before publication
+## Testing in game
 
-- With GD focused, check gameplay, menu navigation, Back/Start, sticks and mouse control.
-- Alt-Tab to another app and exercise every controller control. GD must receive no new controller actions and must not generate Windows mouse movement or clicks.
-- Return while holding a button, trigger or stick. GD must wait for neutral before accepting a fresh press.
-- Repeat with GD minimized, controller disconnect/reconnect and two controllers.
-- Test alongside your installed input-related mods.
+The tests only cover the focus/rearm logic (`FocusGate`), not the hooks. To check it for real:
 
-Automated tests cover the focus/rearm state machine; they do not replace live controller testing.
+- GD focused: menus, gameplay, Start/Back, sticks all work
+- Alt-Tab to another app, press everything: GD shouldn't react and shouldn't move or click the Windows cursor
+- Come back while holding a button: nothing should happen until you let go
+- Same with GD minimized, with a disconnect/reconnect, and with two controllers
+- Check it next to your other input mods
